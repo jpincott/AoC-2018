@@ -21,7 +21,8 @@ fun main(args: Array<String>) {
         }
     }.toMap()
 
-    println(firstCollision(carts, track))
+//    println(firstCollision(carts, track))
+    println(lastSurvivor(carts, track))
 }
 
  fun firstCollision(carts: MutableList<Cart>, track: Map<Point, Char>): Cart {
@@ -35,6 +36,21 @@ fun main(args: Array<String>) {
             }
         }
     }
+}
+
+fun lastSurvivor(carts: MutableList<Cart>, track: Map<Point, Char>): Cart {
+
+    while (carts.count { !it.crashed } > 1) {
+        carts.removeIf{it.crashed}
+        carts.sortWith(compareBy<Cart> { c -> c.xy.y }.thenBy { c -> c.xy.x })
+        for (cart in carts) {
+            cart.tick(track)
+            if (carts.any { it !== cart && it.xy == cart.xy && !it.crashed}) {
+                carts.filter { it.xy == cart.xy }.forEach { it.crashed = true }
+            }
+        }
+    }
+    return carts.first {!it.crashed}
 }
 
 fun right(heading: Direction): Direction = when (heading) {
@@ -78,7 +94,7 @@ data class Point(val x: Int, val y: Int) {
     }
 }
 
-data class Cart(var xy: Point, var heading: Direction, var crossings: Int = 0) {
+data class Cart(var xy: Point, var heading: Direction, var crossings: Int = 0, var crashed: Boolean = false) {
     fun tick(track: Map<Point, Char>) {
         heading = when (track[xy]) {
             '\\' -> ::left
