@@ -12,19 +12,12 @@ fun main(args: Array<String>) {
             .let { (x, y, dx, dy) -> Star(x, y, dx, dy) }
     }
 
-    var screen = Screen(stars)
-    var t = 0
-    do {
-        val next = Screen(screen.stars.map { it.next() })
-        if (next.size > screen.size)
-            break
-
-        screen = next
-        t++
-    } while (true)
-
-    println(screen)
-    println(t)
+    generateSequence (Screen(stars)) { it -> Screen(it.stars.map { it.next() }) }
+        .zipWithNext()
+        .withIndex()
+        .first {it.value.second.size > it.value.first.size}
+        .apply{ println(value.first) }
+        .apply{ println(index) }
 }
 
 data class Star(val x: Int, val y: Int, val dx: Int, val dy: Int) {
