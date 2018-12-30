@@ -1,4 +1,4 @@
-package day18
+package day18.q1
 
 import java.io.File
 
@@ -15,9 +15,6 @@ fun main(args: Array<String>) {
     }
 
     generateSequence(grid) { grid -> next(grid) }
-//        .drop(10000)
-//        .take(100)
-//        .forEach { show(it) }
         .drop(10)
         .first()
         .flatten()
@@ -50,8 +47,3 @@ fun neighbours(grid: Grid, x: Int, y: Int): Map<Char, Int> =
     }.groupingBy { it }.eachCount()
 
 typealias Grid = Array<Array<Char>>
-
-fun show(grid:Grid) {
-    grid.map { y -> y.joinToString ("") { it.toString() } }.joinToString("\n")
-        .let {println(it)}
-}
