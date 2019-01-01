@@ -5,7 +5,7 @@ import kotlin.math.abs
 
 fun main(args: Array<String>) {
 
-    val coords = File("src/day25/q1/t1.txt").useLines { l ->
+    val coords = File("src/day25/input.txt").useLines { l ->
         l.map(String::trim)
             .map { it.split(',') }
             .map { it.map(String::toInt) }
@@ -13,23 +13,16 @@ fun main(args: Array<String>) {
             .toMutableList()
     }
 
-    coords.forEachIndexed { i, c1 ->
-        coords.drop(i + 1).forEach { c2 ->
-            if (c1.dist(c2) <= 3) {
-                println("|$c1-$c2|=${c1.dist(c2)}")
-                c1.add(c2)
-            }
-        }
+    val constellations = mutableSetOf<MutableSet<Coord>>()
+
+    coords.forEach { star ->
+        val nearby = constellations.filter { constellation -> constellation.any {it.dist(star) <= 3} }.toSet()
+        constellations.removeAll(nearby)
+        val element = nearby.flatten().plus(star).toMutableSet()
+        constellations.add(element)
     }
 
-    val set = mutableSetOf<MutableSet<Coord>>()
-    while (coords.isNotEmpty()) {
-        val constellation = coords.first().chain()
-        set.add(constellation)
-        coords.removeAll(constellation)
-    }
-
-    println("There are ${set.size} constellations")
+    println("There are ${constellations.size} constellations")
 }
 
 data class Coord(val x: Int, val y: Int, val z: Int, val t: Int) {
